@@ -1,0 +1,814 @@
+\documentclass{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+
+
+\setlength{\parskip}{1em}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem*{proposition*}{Proposition}
+\newtheorem*{lemma*}{Lemma}
+\newtheorem*{corollary*}{Corollary}
+\newtheorem*{definition}{Definition}
+\newtheorem*{remark}{Remark}
+\theoremstyle{remark}
+\newtheorem{example}{Example}[section]
+
+\usepackage{pst-plot}
+\usepackage{auto-pst-pdf}
+\usepackage{pstricks}
+\usepackage{caption}
+
+\def\f{sqrt(x^3 -x+1)}
+\def\g{sqrt(x^3 -x)}
+
+
+
+
+\title{An elementary exposition of projective geometry and the structure of the geometric group on an elliptic curve}
+\author{Jonathan Keogh}
+\date{Hillary Term 2020}
+
+\begin{document}
+\renewcommand{\abstractname}{\vspace{-\baselineskip}}
+\maketitle
+\begin{abstract}
+   A proof of Bézout's Theorem for arbitrary projective curves over an algebraically closed field of characteristic different from 2 and 3 is given, along with a discussion of the intersection multiplicity. With it we show that all nonsingular projective cubics can be put into Weierstrass form and are therefore elliptic curves. From this we lead into a description of the group law on an elliptic curve and show its well defined by previous constructions. Afterwards we investigate the structure of the groups $E(\mathbb{C})$ and $E(\mathbb{Q})$. We aim for full proofs.
+\end{abstract}
+\section{Introduction}
+\begin{definition}
+Let k be a field. An algebraic curve (or simply a curve) is the zero set of a polynomial in two variables over $k$. We also define the affine space $\mathbb{A}^{n}(k)$ as the $n$-fold cartesian product of \textit{k}. Finally, the \textit{projective n-space over k} is defined as \[ \mathbb{P}^{n}(k) =(k^{n+1} - {\{ 0\} })/  {\raise.17ex\hbox{$\scriptstyle\sim$}} \] where we are taking the quotient with respect to the equivalence relation $a$ {\raise.17ex\hbox{$\scriptstyle\sim$}} $b$ if $a=\lambda b$, with $a,b \in k^{n+1}$ and $\lambda \in k$. 
+\end{definition}
+
+In this paper we are mainly interested in the \textit{projective plane} $\mathbb{P}^{2}(k)$ and curves therein. We denote its elements by $[a:b:c]$ to emphasise that they are equivalence classes. It is instructive to think of the projective plane as the regular affine plane with the added property that that all parallel lines intersect exactly once "at infinity". Specifically, we can write it as the disjoint union of sets $A =\{[a:b:1]$ $|$ $ a,b\in k \}$ and $B =\{[a:b:0]$ $|$ $ a,b\in k \}$, where we identify all $[x:y:1]\in A$ with $(x,y)\in \mathbb{A}^{2}(k)$ and $[u:w:0]\in B$ with the unique line $wx-uy=0$. In this identification, $B$ consists of lines which indicate in what direction the points "at infinity" are (both directions of a line being considered equivalent).
+
+Every algebraic curve in the affine plane can be represented as the image of a homogeneous polynomial over the projective plane. Throughout, we will interchangeably refer to an algebraic curve by its homogenous polynomial and the image of said polynomial.
+
+\begin{definition} \begin{enumerate}
+\item A \textit{homogeneous polynomial} of degree \textit{d} is a polynomial such that $P(\lambda x_1,\ldots ,\lambda x_n)=\lambda ^{d}P(x_1,\ldots ,x_n)$ $\forall \lambda \in k$.
+\item Let $P\in k[x,y,z]$ be a homogeneous polynomial; then it's zero set in $\mathbb{P}^{2}(k)$ is well-defined. Given such a polynomial, we define the \textit{projective curve} of $P$ to be the set \[C=\{ [x:y:z]\in \mathbb{P}^{2}(k) | P(x,y,z)=0\}.\]
+\end{enumerate}
+\end{definition}
+Consider an algebraic curve defined by an irreducible homogeneous polynomial of degree $d$. If $d=1$ then we call it a \textit{line}; when $d=2$ a \textit{conic}; when $d=3$ a \textit{cubic}; and so on.
+
+If we have the plane algebraic curve defined by $P(x,y)$ of degree $d$ then we can homogenise $P$ by introducing the auxiliary variable $z$ by $P'(x,y,z):=z^d P(\frac{x}{z},\frac{y}{z})$; conversely, a homogenous polynomial can be de-homogenised by setting $z=1$. This gives a bijection $[x:y:1]\leftrightarrow (x,y)$ between points defined by a homogenous polynomial in the projective plane not at infinity and points in the affine plane defined by the de-homogenised polynomial.
+\par
+Bézout's Theorem essentially states that the special property of the projective plane - of any two lines intersecting exactly once - extends to any two curves, with additional nice properties. \\
+\begin{example} Consider the lines $\alpha x +\beta y + \gamma =0 $ and $\delta x +\zeta y + \eta =0$, where we assume they have unequal slope. We may choose a coordinate system such that they have the form $y=m_1 x+b_1$ and $y=m_2 x +b_2$; then they intersect exactly once at the point $(\frac{b_1-b_2}{m_2 - m_1},\frac{b_1 m_2 - b_2 m_1}{m_2 - m_1})$. If we perturb either lines by a constant then the perturbation is absorbed into the constants $b_1$ and $b_2$, giving still exactly one intersection point.
+\end{example}
+
+\begin{example} Consider the curves $y=x^2$ and $y=0$, then they intersect exactly once at the origin. This intersection has a special property. If we perturb the first curve by an arbitrary constant $y_{\epsilon}=x^2 -  \epsilon$, then we have exactly two intersection points $(\pm\sqrt{\epsilon},0)$, no matter how small $\epsilon$ is.\\
+\end{example}
+
+The difference between these examples is that the first has multiplicity one at its intersection, while the second has multiplicity two. We need to be able to capture this property for arbitrary curves in the projective plane. This is done with resultants.
+
+Our exposition follows Kirwan. Throughout, $k$ is an arbitrary field.
+
+\begin{definition}
+Let $P(x)=a_0 +a_1 x +\ldots + a_n x^n, Q(x)=b_0 +b_1 x +\ldots + b_m x^m\in k[x]$ be such that $a_n b_m\neq 0$. The \textit{resultant} $R_{P,Q}$ of $P$ and $Q$ is defined as the determinant of the $(n+m) \times (n+m)$ matrix
+
+\[\begin{pmatrix}
+  a_{0}   & a_{1} & \cdots & \cdots & \cdots & a_{n}     & 0       & 0           & \cdots & 0         \\
+       0     & a_{0} &  a_{1}  & \cdots & \cdots & a_{n-1} & a_{n} & 0         & \cdots  & 0          \\
+  \vdots  &         & \ddots &           &            & \vdots   &           & \           & \vdots & \vdots  \\
+  0         &  \cdots &       0    & a_{0}  & \cdots &\cdots    &\cdots  &\cdots &\cdots   & a_{n}     \\
+  b _{0}   & b_{1} & \cdots & \cdots &  b_{m}  & 0          & \cdots & \cdots & \cdots & 0         \\
+   \vdots  & \vdots & \ddots &         & \vdots   &              &          &             & \vdots               \\
+   0         &  \cdots  &  b_{0} & b_{1}  & \cdots &             &           &           &\cdots   & b_{m}     \\
+ \end{pmatrix}\]
+ where the first $m$ rows consists of shifts of $(a_0, \ldots , a_n)$ to the right, and the remaining $n$ rows consists of the same for $(b_0, \ldots , b_m)$. 
+
+For $P(x,y,z)= \sum_{i=0}^{n} a_{i}(y,z)x^i,Q(x,y,z)=\sum_{n=i}^{m} b_{i}(y,z)x^i \in k[x,y,z]$, we define $R_{P,Q}(y,z)$ similarly.
+\end{definition}
+Since we are primarily interested in the zero set of homogeneous polynomials, we can assume that all of our polynomials are monic.
+\begin{proposition} \begin{enumerate} 
+\item Let $P,Q\in k[x]$, then $R_{P,Q}=0$ if and only if $P$ and $Q$ have a common factor in k[x].
+\item Let $P,Q\in k[x,y,z]$ be homogeneous polynomials and $P(1,0,0)Q(1,0,0)\neq 0$; then $R_{P,Q}=0$ if and only if $P$ and $Q$ have a non-constant homogeneous common factor in  $k[x,y,z]$.
+
+\end{enumerate} \end{proposition} \begin{proof} \begin{enumerate}
+
+    \item Suppose $R,Q$ have a common factor, i.e. $P(x)=S(x)\phi (x), Q(x)=S(x)\psi (x)$, where deg $S\geq 1$ (otherwise $S$ is constant and not a common factor). Assume $\phi (x)=c_0 + \ldots +c_{n-1}x^{n-1}$ and $\psi (x)=d_0 + \ldots + d_{m-1}x^{m-1}$ (the higher coefficients of either can be zero, but $\phi$ and $\psi$ are not identically zero), then the relation $P\psi = S\phi \psi =Q\phi $ gives a non-trivial linear dependence on the rows of the matrix that defines $R_{P,Q}$,
+    \[
+\sum_{j=1}^{m} d_{j-1}\cdot(j\text{-th row}) - \sum_{i=1}^{n} c_{i-1}\cdot(m+i \text{-th row})=0
+\]
+(note that we are identifying the rows as in the span of the basis $\{x^i\}$). Therefore, we have $R_{P,Q}=0$. Conversely, the exact reverse of this derivation gives polynomials $\phi$ and $\psi$ such that $P\psi =Q\phi $ when $R_{P,Q} =0$, with deg $\psi \leq m-1$, deg $\phi \leq n-1$. Since $k[x]$ is a UFD, this implies they have a common factor.
+
+\item We can assume that $P(1,0,0)=Q(1,0,0)=1$. Let Frac$(k[y,z])$ be the field of fractions of $k[x,y]$; by above we have $R_{P,Q}=0$ if and only if $P,Q$ have a common factor in Frac$(k[y,z])[x]$. This is the same as $P-Q$ being reducible in Frac$(k[y,z])[x]$. By Gauss' Lemma, this is itself equivalent to $P-Q$ being reducible over $(k[y,z])[x]$. Therefore, we have 
+\begin{equation*}
+\begin{split}
+R_{P,Q}=0 & \iff P \text{ and } Q \text{ have a common factor in Frac} (k[y,z])[x]         \\
+                  & \iff P-Q \text{ is reducible in Frac} (k[y,z])[x]                                            \\
+                  & \iff P-Q \text{ is reducible in } (k[y,z])[x]                                                     \\
+                  & \iff P \text{ and } Q \text{ have a common factor in } (k[y,z])[x] = k[x,y,z]   \\
+\end{split}
+\end{equation*}
+We finally note that every factor of a homogeneous polynomial is homogeneous; see Appendix A.
+\end{enumerate} \end{proof}
+
+\begin{proposition} 
+If $P,Q\in k[x,y,z]$ are homogeneous of degree n and m, then $R_{P,Q}$ is homogeneous of degree nm if it is not identically zero.
+\end{proposition}
+\begin{proof}
+Let $r_{i,j}(y,z)$ be the $(i,j)$-th element of the resultant matrix, and $d_{i,j}$ be its degree. After staring at the resultant matrix for long enough, we find
+\begin{equation*}
+  d_{i,j}=\begin{cases}
+    n+j-i, & \text{if $1\leq i \leq m,$ $i\leq j\leq n+i$}\\
+    j-i, & \text{if $m+1 \leq i \leq m+n,$ $i-m\leq j\leq i$}\\
+    0, & \text{otherwise}.
+  \end{cases}
+\end{equation*}
+Each summand of the determinant is $\prod_i r_{i,\sigma (j)}(y,z)$, where $\sigma \in S_{n+m}$. Each of these summands have degree 
+\begin{equation*}
+\sum_{i=1}^{n+m} d_{i,\sigma (j)}=\sum_{i=1}^{m} n+i-\sigma (j) + \sum_{i=1}^{n} i - \sigma (j) = nm, 
+\end{equation*}
+and so does $R_{P,Q}$
+\end{proof}
+\begin{proposition}
+If $P(x)=\prod_{i=1}^{n} (x-\lambda_i),Q(x)=\prod_{j=1}^{m} (x-\mu_i)\in k[x]$, then
+\begin{equation*}
+R_{P,Q}=\prod_{i,j}(\lambda_i - \mu_j).
+\end{equation*}
+\end{proposition}
+\begin{proof}
+By definition, the resultant $R_{P,Q}$ can be identified as a polynomial in $k[\lambda_1,\ldots, \lambda_n, \mu_1,\ldots \mu_m]$. For any $\lambda_i$ of we have
+\[P\in \text{Frac}(k[\lambda_1\ldots \lambda_{i-1},\lambda_{i+1},\ldots,\lambda_n,\mu_1,\ldots,\mu_m])[\lambda_i].\]
+The resultant vanishes whenever $\lambda_i=\mu_j$ for some $j$; therefore $P$ embedded in this field is seen to be divisible by $(\lambda_i - \mu_j)$. Since $\lambda_i,\mu_j$ were arbitrary, $k$ is algebraically closed, and these are the only possible roots of $P$, we have by comparison of degrees 
+\[R_{P,Q}=c\prod_{i,j}(\lambda_i - \mu_j),\]
+for some scalar $c\in k$. To determine the constant, put $P=(x-\lambda_i)^n,Q=x^m$ so that $\mu_j=0$ $\forall j$. In this case the matrix is upper triangular and can be evaluated as
+\[\text{det} \begin{pmatrix}
+  a_0   &    a_1 & \cdots & \cdots & \cdots &    1    & 0       & 0           & \cdots & 0         \\
+       0     &  a_0       &  a_1        & \cdots & \cdots &      a_{n-1}     &    1      & 0         & \cdots  & 0          \\
+  \vdots  &         & \ddots &           &            & \vdots   &           & \           & \vdots & \vdots  \\
+  0         &  \cdots &       0    &  a_0  & \cdots &\cdots    &\cdots  &\cdots &\cdots   &      1     \\
+  0         &      0     & \cdots & \cdots &    1     & 0           & \cdots & \cdots & \cdots & 0         \\
+   \vdots  & \vdots & \ddots &         & \vdots   &              &          &             & \vdots               \\
+   0         &  \cdots  &     0    &    0   & \cdots &             &           &           &\cdots   & 1          \\
+ \end{pmatrix}
+ =a_0^m=(\prod_{i=1}^{n}( -\lambda_i))^m\]
+ \[=\prod_{i=1}^{n}( -\lambda_i)^m;\]
+ therefore $c=1$.
+
+\end{proof}
+\begin{corollary*}
+$R_{P,QS}=R_{P,Q} R_{P,S}$
+\end{corollary*}
+\begin{proof}
+Obvious from above.
+\end{proof}
+\section{Intersection multiplicity and Bézout's Theorem}
+We can already prove a very strong statement about projective curves easily. Two algebraic curves are said to have a \textit{common component} if they have a non-constant greatest common divisor. Conceptually, if $P,Q,H\in k[x,y]$ and $H$ is a non-constant greatest common divisor of $P$ and $Q$, then $H(x,y)=0$ is a curve that belongs to both of the curves defined by $P$ and $Q$.
+\begin{theorem}
+(Weak Bézout's Theorem) Suppose $C$ and $D$ are projective curves (defined by polynomials $P$ and $Q$) of degree $n$ and $m$ respectively without a common component, then they intersect at most $nm$ times.
+\end{theorem}
+\begin{proof}
+Make a change of coordinates (see Appendix) such that $[1:0:0]$ does not belong to $C\cup D$ or any line going through two distinct points of intersection; then $P(1,0,0)Q(1,0,0)\neq 0$. If the resultant of $P$ and $Q$ was identically zero then they would share a non-constant common factor by Proposition 1, implying they have a common component. Therefore, the resultant splits into the product of $nm$ linear factors (counting multiplicity) of the form $b_{i}z- c_{i}y$ (see Appendix). For each $(b_i,c_i)$ we can find an $a_i$ such that $P(a,b,c)=Q(a,b,c)=0$, since $R_{C,Q}(b_i,c_i)\equiv 0$; this give a point of intersection $[a_i:b_i:c_i]$ for each $(b_i,c_i)$. If there was another distinct point of intersection $[\alpha:\beta:\gamma]\neq [a_i:b_i:c_i]$ $\forall i$ then it would be the case that $b_j \gamma-c_j\beta =0$ for some $j$ (otherwise it would not be a root of the resultant and so would not be a point of intersection). This would imply that $[\alpha:\beta:\gamma], [a_j:b_j:c_j]$ and $[1:0:0]$ all lie on the line
+\[b_jz=c_jy,\]
+in contradiction to our conditions on $[1:0:0]$; hence, another distinct point of intersection cannot happen. Since there can only be at most $nm$ distinct factors of the resultant, the result follows.
+\end{proof}
+We now enter into the technical heart of Bézout's Theorem. The most difficult part is in giving a satisfactory definition of intersection multiplicity for arbitrary projective curves and showing its well-defined. Intuitively when we think of the cubic $y=x^3$, it seems to 'interact' with the $x$-axis at the origin more intimately than than the line $y=x$. We could formally define the intersection multiplicity of the curve $y=x^n$ with the $x$-axis at the origin to be $n$, then extrapolate to other curves through coordinate transformations and the like. Other than some technicalities, this is essentially how we define the intersection multiplicity.
+\begin{definition}
+An intersection multiplicity $I_{p}(C,D)$ (given by homogenous polynomials $P$ and $Q$) at a point $p\in\mathbb{P}^{2}(k)$ is a quantity that satisfies the following axioms:
+\begin{enumerate}
+\item $I_{p}(C,D)=\begin{cases}
+    \infty,                       & \text{$p$ is in a common component of $C$ and $D$}\\
+    \in\mathbb{Z}_{>0}, & \text{$p\in C\cap D$, not in a common component}\\
+    0,                            & \text{$p\not\in C\cap D$}.
+  \end{cases}$
+\item $I_{p}(C,D)=I_{p}(C,D)$
+\item If $C$ and $D$ are lines and $C\cap D=\{p\}$ then $I_{p}(C,D)=1$
+\item $I_{p}(C_1 C_2,D)=I_{p}(C_1,D)+I_{p}(C_2,D)$
+\item $I_{p}(C,D)=I_{p}(C,D+CR)$ if deg $R=$ deg $D-$ deg $C$.
+\end{enumerate}
+\end{definition}
+\begin{theorem}
+There exists a unique intersection multiplicity defined for all projective curves and points in the projective plane.
+\end{theorem}
+\begin{proof}
+As with most proofs of this type, uniqueness is the most difficult part to verify. For ease of notation we denote the intersection multiplicity of the curves by their polynomials, $I_{p}(P,Q)$.
+\item (Existence) Define 
+\[I_{p}(P,Q)=\begin{cases}
+    \infty,                       & \text{$p$ is in a common component of $C$ and $D$}\\
+    0,                            & \text{$p\not\in C\cap D$}.
+  \end{cases}\]
+When $p\in C\cap D$ and not in a common component of $C$ and $D$, we define $I_{p}(P,Q)$ as follows. Remove any common component of $P$ and $Q$ and choose a coordinate system such that $[1:0:0]$ is not in $C\cup D$, any line containing two distinct points of $C\cap D$, or the tangent lines of $C$ or $D$ at any point of $C\cap D$ (this is possible since $C\cap D$ is finite by Weak Bézout's Theorem). For such a $p=[a:b:c]\in C\cap D$, we make $I_{p}(P,Q)$ equal to the exponent of $bz-cy$ in $R_{P,Q}$. We verify the axioms:
+\begin{enumerate} \item Since $R_{P,Q}=(-1)^{nm} R_{Q,P}$, the exponents coincide.
+\item If $p\in C\cap D$ and not in a common component of $C$ and $D$, then $I_{p}(P,Q)\in\mathbb{Z}_{>0}$ since the resultant has non-negative exponents.
+\item If $P$ and $Q$ are of degree 1 then so is the resultant, hence $I_{p}(P,Q)=1$.
+\item Since $R_{P_1 P_2,Q}=R_{P_1,Q} R_{P_2,Q}$, the exponent of $bz-cy$ on the left hand side is equal to the sum of the its exponents on the right hand side.
+\item The resultant matrix of $R_{P,Q+PR}$ can be transformed by elementary row operations into the resultant matrix of $R_{P,Q}$; hence their determinants have the same exponent.
+\end{enumerate}
+\item (Uniqueness) This is the hard part.  We will show that the intersection multiplicity can be calculated using only the axioms, implying they determine it completely. The cases for $p\not\in C\cap D$ and $p$ in a common component of $C$ and $D$ are already determined by axiom 2. Therefore we assume that $p\in C\cap D$ but not in a common component, and that $C,D$ are irreducible by our construction of $I_p (P,Q)$ in removing any common components. The axioms are independent of our choice of coordinates since the multiplicity of the root in the resultant is invariant (see Appendix), so we may assume that $p=[0:0:1]$. Assume throughout that $P,Q$ have degree $n,m$ respectively. The base case is obvious; suppose uniqueness holds and for all $I_p(P,Q)=l<c$ the intersection multiplicity can be calculated by the axioms. Put $I_p(P,Q)=c$.
+
+Let 
+\[\text{deg }P(x,0,1)=r\leq s=\text{deg }Q(x,0,1)\]
+without loss or generality by axiom 1. There are two cases to consider.
+\begin{enumerate}
+\item $r=0$. \\
+Write
+\[P(x,y,z)=P(x,0,z)+yR(x,y,z), Q(x,y,z)=Q(x,0,z)+yS(x,y,z), \]
+for some $R,S$ both homogeneous. Since $r=0$, $P(x,0,1)$ is constant and identically zero since $P(0,0,1)=0$. This implies the highest power of $z$ has coefficient equal to zero, hence $P(x,0,z)$ is identically zero.\\ \par
+Write $Q(x,0,z)=x^qT(x,z)$, where $T(0,1)\neq 0$; since then the highest power of $z$ has coefficient equal to zero and would could factor out another $x$ term. Note that $q>0$ since $Q(0,0,1)=0$ implies again that the term of the highest power of $z$ is zero; and that $T$ is homogeneous of degree $m-q$ since $Q(x,0,z)$ is homogeneous of degree $m$. The condition $T(0,1)\neq 0$ implies that $p$ does not lie on the curve $T(x,z)=0$, hence $I_p(y,T)=0$. Putting all of this together we have
+\begin{align*}
+  I_p(P,Q)&=I_p(R,Q) + I_p(y,Q) \text{ \,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\, by axiom 4}\\
+  &=I_p(R,Q)+I_p(y,x^qT) \text{ \,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\, since }Q(x,0,z)=x^qT \\
+  &=I_p(R,Q)+qI_p(y,x)+I_p(y,T) \text{ \,again by axiom 4}\\
+  &=I_p(R,Q)+q.
+\end{align*}
+Note that $I_p(R,Q)<c=I_p(P,Q)$ is determined by the axioms, implying $I_p(P,Q)$ is. 
+\item $r>0$. \\
+Multiply $P,Q$ to make $P(x,0,1),Q(x,0,1)$ monic. Introduce the auxiliary polynomial 
+\[G(x,y,z)=z^{n+s-r}Q(x,y,z)-x^{s-r}z^mP(x,y,z), \]
+which is defined so as to be homogeneous and the polynomial in $x$
+\[G(x,0,1)=Q(x,0,1)-x^{s-r}P(x,0,1)\]
+have degree strictly less that $s$; this follows from $Q(x,0,1),P(x,0,1)$ being both monic. Note $G$ is not identically zero since $P,Q$ don't share a common component. We have,
+\begin{align*}
+  I_p (P,Q) &= (n+s-r)\cdot 0 +I_p(P,Q) \\
+  &= (n+s-r)\cdot I_p (P,z)+ I_p(P,Q) \text{ \,\,\,\,\,\,\,\,\,\,\,\,\,since }p\text{ is not on the line }z=0\\
+  &=I_p(P,z^{n+s-r})+I_p(P,Q) \text{\, \,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\, by axiom 4}\\
+  &=I_p(P,z^{n+s-r}Q), \text{ \,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\, again by axiom 4}\\
+  &=I_p(P,z^{n+s-r}Q-x^{s-r}z^mP) \text{\, \,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\, by axiom 5}\\
+  &=I_p(P,G).
+\end{align*}
+Since $G$ has degree strictly less than $s$, this can be used in a finite number of steps (interchanging $P$ and $Q$ is necessary) to reduce the problem to the case $r=0$.
+\end{enumerate}
+\end{proof}
+Now we can proceed leisurely once again.
+\begin{theorem}
+(Bézout's Theorem) Suppose $C$ and $D$ are projective curves, with no common component, of degree $n$ and $m$ respectively; then they have exactly $nm$ points of intersection, counting multiplicities.
+\end{theorem}
+\begin{proof}
+From above and the fact that $k$ is algebraically closed we have that $R_{P,Q}$ splits into linear factors as
+\[R_{P,Q}=\prod_{i=1}^{k} (b_i z-c_i y)^{e_i}.\]
+By similar arguments used above to prove Weak Bézout's Theorem, after a change of coordinates we can find a unique $a_i$ for each $(b_i,c_i)$ such that $p=[a_i:b_i:c_i]\in C\cap D$; therefore,
+\[ \sum_{q\in C\cap D}I_{q}(P,Q)=\sum_{p_i\in C\cap D}I_{p_i}(P,Q)=\sum_{i}e_i=\text{ deg } R_{P,Q}=nm\]
+\end{proof}
+\begin{remark}
+Distinct linear factors in the resultant \underline{do not} correspond to distinct intersection points in general! Only after making the change of coordinates such that $[1:0:0]\notin C\cap D$ or any line going through two points of intersections does this become the case. However, the number of distinct intersection points and their multiplicity \underline{is} invariant, since the intersection multiplicity was defined axiomatically without any reference to polynomials and their coordinates; so Bézout's Theorem still holds.
+
+\end{remark}
+\par
+\par
+\begin{example} (TO DO: GRAPHS) Let $C_1,C_2$ be the \textit{lemniscates} defined by
+\[x^4+y^4+x^2-y^2=0\]
+\[x^4+y^4-x^2+y^2=0.\]
+In the complex projective plane they are defined by,
+\[x^4+y^4+x^2z^2-y^2z^2=0\]
+\[x^4+y^4-x^2z^2+y^2z^2=0.\]
+Equating the polynomials, and we have the relation
+\[z^2(x-y)(x+y)=0;\]
+hence our only candidates for intersections are on the lines $x=\pm y$ and $z=0$ (the line at infinity). Setting $y=\pm x$ gives $x^4=0$ hence the only intersection in this case is at the origin. We calculate its intersection multiplicity by\\
+\begin{align*}
+  I_{[0:0:1]} (P,Q) &=I_{[0,0,1]} (x^4+y^4+x^2z^2-y^2z^2,x^4+y^4-x^2z^2+y^2z^2)  \\
+  &=I_{[0:0:1]} (x^4+y^4+x^2z^2-y^2z^2,2y^2-2x^2)  \\
+  &=I_{[0:0:1]} (x^4+y^4,2y^2z^2-2x^2z^2).\\
+   &=I_{[0:0:1]} (x^4+y^4,2(x-y)(x+y))+I_{(0,0,1)} (x^4+y^4,z^2)  \\
+  &=I_{[0:0:1]} ((x-\zeta_{4,1}y)(x-\zeta_{4,2}y)(x-\zeta_{4,3}y)(x-\zeta_{4,4}y),2(x-y)(x+y))\\
+  &=4\cdot 2=8,
+\end{align*} 
+where $\zeta_{4,i},$ $i=1,2,3,4$ are the $4$-th roots of unity. Since $($deg $P$$)($deg $Q)> 8$ we still have some points to find. Setting $z=0$ we have
+\[ x^4+y^4=(x-\zeta_{4,1}y)(x-\zeta_{4,2}y)(x-\zeta_{4,3}y)(x-\zeta_{4,4}y)=0;\]
+therefore we have four other points at infinity of the form $p_i=[\zeta_{4,i}:1:0]$ (recall scaling of points gives the same point in the projective plane). Calculating the intersection multiplicity gives,
+\begin{align*}
+I_{p_i} (P,Q) &=I_{p_i} (x^4+y^4+x^2z^2-y^2z^2,x^4+y^4-x^2z^2+y^2z^2)  \\
+  &=I_{p_i} (x^4+y^4,2(x-y)(x+y))+I_{(0,0,1)} (x^4+y^4,z^2) \\
+  &=I_{p_i} ((x-\zeta_{4,1}y)(x-\zeta_{4,2}y)(x-\zeta_{4,3}y)(x-\zeta_{4,4}y),z^2)
+  &=2\cdot1=2,
+\end{align*}
+for each $p_i$. This gives the total intersection multiplicities 16=$($deg $P$$)($deg $Q$); therefore, these are all the possible intersections.
+\end{example}
+\par
+\begin{example} Consider the lemniscate and cusp,
+\[x^4+y^4+x^2-y^2=0\]
+\[y^3=x^2.\]
+There looks to be a highly non-trivial intersection at the origin. The intersection multiplicity is
+ \begin{align*}
+  I_{[0:0:1]} (P,Q) &=I_{[0:0:1]} (x^4+y^4-x^2z^2+y^2z^2,y^3-x^2z)  \\
+\end{align*} 
+\end{example}
+
+\par
+We can apply the machinery we have developed to a classification of nonsingular curves, and in particular cubic curves. 
+\begin{proposition}
+Let be $C_1,C_2$ be irreducible curves of degree $d$ that intersect $d^2+1$ (or more) times at distinct points; then $C_1=C_2$.
+\end{proposition}
+\begin{proof}
+By Bézout's Theorem, two such irreducible curves intersect no more than $d^2$ times. Therefore they must have a common component. Since they are irreducible, this implies they must be equal.
+\end{proof}
+This very nicely generalises the fact that two points define a line. We see that a curve of degree two is determined by five points, and determined by ten points if of degree three; and so on. We can find such curves easily using linear algebra; every point imposes a constraint, which can be used to find the coefficients of each homogeneous term. For example with the quadric curve  $ax^2+bxy+cy^2+dxz+eyz+fz^2=0$, since there are 6 terms, we can evaluate it at the five points to determine the coefficients. It's not true however that in general an irreducible curve always goes through these points.
+\par The next theorem will be utilised to great effect in the next section.
+\begin{theorem}(Cayley-Bacharach) Let $C_1$ and $C_2$ be two cubic curves that intersect in exactly nine points. Let C be a curve passing through eight of the nine intersection points of $C_1$ and $C_2$; then C passes through
+the ninth intersection point as well.
+\end{theorem}
+\begin{proof}
+Let $A_i,$ $i=1,\ldots ,9$ be the intersection points. We will show that $C$ must be defined by a homogeneous polynomial that is a linear combination of the polynomials that define $C_1,C_2$. Suppose this is not the case. We work on preliminary cases before making the final argument.
+\par
+No four of the points are collinear; for if they were, then both $C_1,C_2$ would intersect the line four times, in contradiction to Bézout's Theorem. Any five of these points determine a quadric curve by the above proposition. This curve is unique; for if two different quadric curves shared these same five points, then they would again contradict Bézout's Theorem.
+\par
+Suppose three of the given points $A_1,A_2,A_3$ are collinear on the line $l$. The remaining five determine a unique quadric $\sigma$by above. Let $P$ be another point on $l$, and $Q$ a point not on $l$ or $\sigma$. Let $p_1,p_2$ and $p_3$ and $q_1,q_2$ and $q_3$ denote the values the cubics $C_1,C_2$ and $C$ take at the points $P$ and $Q$ respectively. The system of equations 
+\pagebreak
+\[p_1x+p_2y+p_3z=0\]
+\[q_1x+q_2y+q_3z=0 \]
+has a non-trivial solution by linear algebra. If $(a,b,d)$ is a solution then we have a non-trivial combination $D=aC_1+bC_2+dC$, and $D$ vanishes at $P$ and $Q$. Further, $D$ is not constant since by assumption $C$ is not a linear combination of $C_1,C_2$. Now, since $l$ intersects $D$ at four points $A_1,A_2,A_3$ and $P$, Bézout's Theorem forces $D$ to contain the line $l$. Thus $D$ is the product of $l$ and $\sigma$; but then $Q$ lies on either $l$ or $\sigma$, a contradiction. No three points are collinear.
+\par
+Similarly, suppose six of the first eight points - say $A_1,\ldots,A_6$ - lie on a quadric $\sigma$. Since no three points can be collinear by above, the quadric must be an irreducible conic. As before, let $l$ be the line going through $A_7,A_8$, $P$ another point on $\sigma$, and $Q$ and point on neither $l$ or $\sigma$. By the same argument as above we can find a non-trivial cubic $D=aC_1+bC_2+dC$ vanishing on $P$ and $Q$. As $D$ vanished on seven points of $\sigma$; since $\sigma$ is a conic $D$ must contain $\sigma$ entirely. Therefore $D$ is the union of $\sigma$ and the line $l$; but then this curve cannot pass through $C$ by assumption, which is a contradiction.
+\par
+Finally, let $l$ be the line going through $A_1,A_2$ and $\sigma$ going through $A_3,\ldots,A_7$; from the above arguments $\sigma$ is a conic, and $A_8$ cannot lie on $l$ (no three points are collinear) or $\sigma$(no five points like on on a quadric curve). As before pick two points $P,Q$ on $l$ but not $\sigma$; then there exists $D=aC_1+bC_2+dC$ vanishing on $P,Q$. Since $D$ is a cubic that vanishes at four points of $l$ and five points of the conic $\sigma$ it must be the union of these two; but then $A_8$ does not pass through $D$, a contradiction. Therefore $C$ must be a linear combination of $C_1,C_2$ and so must pass through all nine intersection points.
+\end{proof}
+We continue in our classification of nonsingular and irreducible curves.
+\begin{definition}
+We define the partial derivatives $P_x =\frac{\partial P}{\partial x},P_y =\frac{\partial P}{\partial y},P_z =\frac{\partial P}{\partial z}$ of a polynomial formally so that they coincide with the usual definition of partial derivatives. A projective curve $C$ defined by a homogeneous polynomial $P\in k[x,y,z]$ is called singular if there exists a point $[a:b:c]\in C$ such that 
+\[P(a,b,c)=P_x (a,b,c)=P_y (a,b,c)=P_z (a,b,c)=0.\]
+\end{definition}
+Note that the tangent line to $C$ at a nonsingular point $p=[a:b:c]$ is the line given by
+\[xP_x (a,b,c)+yP_y (a,b,c)+zP_z (a,b,c)=0. \]
+\begin{proposition} 
+\begin{enumerate} 
+\item Every nonsingular projective curve is irreducible
+\item If a projective curve is irreducible then it has finitely many singular points
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}
+\item Suppose $C$ is reducible, then its defining polynomial can be written as a product of non-constant polynomials $P=RS$. By Bézouts Theorem, both $R$ and $S$ have a common zero $p=[a:b:c]$ with 
+\[P(a,b,c)=P_x (a,b,c)=P_y (a,b,c)=P_z (a,b,c)=0,\]
+in contradiction to $C$ being nonsingular.
+\item Suppose C is defined by $P$ of degree $n$. By a change of coordinates, we can assume that $[1:0:0]\not\in C$, which implies that the coefficient of the $x^n$ term is non-zero; therefore $P_x$ is of degree $n-1$ and does not have a common factor with $P$ since its irreducible. By Bézout's Theorem, they have at most $n(n-1)$ distinct roots in common, implying $C$ can have at most $n(n-1)$ singular points. 
+\end{enumerate}
+\end{proof}
+\textit{Example 2.3} Let $C$ be an irreducible conic curve in the projective plane. Write its defining polynomial as,
+\[ax^2+by^2+cz^2+dxy+exz+fyz.\]
+Since there are only finitely many singular points we can perform a change of coordinates so that $[0:1:0]\in C$ and is nonsingular, with its tangent line given by $z=0$. This implies that the coefficient of the $y^2$ term is zero, and that 
+\[P_x(0,1,0)=P_y(0,1,0)=0;  \]
+implying $d=0$. Our conic is reduced to 
+\[ax^2+cz^2+exz+fyz.\]
+Apply the projective transformation  $[x':y':z']= [\sqrt{a}x:fy+ex+cz,-z]$ to obtain,
+\[(\sqrt{a}x)^2 +z(cz+ex+fy)=x'^{2}-z'y',\]
+a parabola. Conclusion: the classic conic sections are equivalent in the projective plane. 
+\par
+In fact we can do one better; we show all nonsingular cubics can be put into a particularly nice form. From now on we assume $k$ is algebraically closed with char$(k)\neq 2,3,4$ (this is so that transformations involving their reciprocals are well-defined).
+\begin{definition}
+Let $P(x,y,z)$ be a homogeneous polynomial of degree $d$, then the Hessian $H_P$ is defined as the degree $3(d-1)$ (if $d\leq 1$, then $0$) polynomial
+\[ H_P (x,y,z) = \det 
+\begin{pmatrix}
+  P_{xx}                      &     P_{xy}                  & P_{xx}                       \\
+   P_{yx}                     &     P_{yy}                  & P_{yz}                        \\
+   P_{zx}                     &     P_{zy}                  & P_{zz}                        \\
+ \end{pmatrix}.\]
+A nonsingular point $[a:b:c]\in C$ is called a point of inflection of $C$ if $H_P (a,b,c)=0$.
+\end{definition}
+\begin{proposition} (Euler's relation) If $R(x,y,z)$ is a homogeneous polynomial of degree $m$ then
+\[x\frac{\partial R}{\partial x}+ y\frac{\partial R}{\partial y}+z\frac{\partial R}{\partial z}=mR. \]
+\end{proposition}
+\begin{proof}
+Differentiate both sides of the relation $R(\lambda x,\lambda y, \lambda z)=\lambda^m R(x,y,z)$ with respect to $\lambda$ and set $\lambda =1$.
+\end{proof}
+\begin{lemma*}
+If $d=$ deg $P>1$, then 
+\[ y^2 H_P(x,y,z)=(d-1)^2 \det 
+\begin{pmatrix}
+  P_{xx}                      &     P_{x}                  & P_{xz}                       \\
+   P_{x}                     &  \frac{d}{d-1}P           & P_{z}                        \\
+   P_{zx}                     &     P_{z}                  & P_{z}                        \\
+ \end{pmatrix} .\]
+\end{lemma*}
+\begin{proof}
+From Euler's relation above we have,
+\[ dP=xP_x+ yP_y+zP_z\]
+\[ (d-1)P_x=xP_{xx}+ yP_{yx}+zP_{zx}\]
+\[ (d-1)P_y=xP_{xy}+ yP_{yy}+zP_{zy}\]
+\[ (d-1)P_z=xP_{xz}+ yP_{yz}+zP_{zz}.\]
+Expanding out the right hand side and using these relations, then collecting terms, gives the desired result.
+\end{proof}
+\begin{theorem}
+Every nonsingular cubic curve $C$ in the projective plane is equivalent under a projective transformation to a cubic defined by
+\[y^2 z=x(x-z)(x-\lambda z),\]
+where $\lambda\in k-\{0,1\}. $
+\end{theorem}
+\begin{proof}
+Let $P$ be the polynomial that defines $C$. Since deg $H_P=3(3-2)=3\\ =$ deg $P$, $H_P$ and $P$ have a point of intersection; which implies $C$ has a point of inflection $p=[a:b:c]$. By a change of coordinates we can assume that $p=[0:1:0]$ and that the tangent line at $p$ is $z=0$. By the definition of the tangent line at a point on the curve, we have
+\[P(0,1,0)=P_x (0,1,0)=P_y(0,1,0)=H_P (0,1,0)=0;\]
+while
+\[P_z(0,1,0)\neq 0,\]
+since $C$ is nonsingular. By the above lemma we have,
+\[ y^2 H_P(x,y,z)=4 \det 
+\begin{pmatrix}
+  P_{xx}                      &     P_{x}                  & P_{xz}                       \\
+   P_{x}                     &  \frac{3}{2}P           & P_{z}                        \\
+   P_{zx}                     &     P_{z}                  & P_{z}                        \\
+ \end{pmatrix};\]
+ therefore, 
+ \[ 0=y^2 H_P(0,1,0)=4 \det 
+\begin{pmatrix}
+  P_{xx}                      &     0                         & P_{xz}                       \\
+            0                      &  0                            & P_{z}                        \\
+   P_{zx}                     &     P_{z}                  & P_{z}                        \\
+ \end{pmatrix}=-4(P_z(0,1,0))^2 P_{xx}(0,1,0),\]
+ implying $P_{xx} (0,1,0)=0$. Putting this together, this means that the coefficients of following terms are zero: $y^3,xy^2,x^2y.$ Rewrite $P$ without these terms as 
+ \begin{align*} 
+ P(x,y,z)&=Q(x,z) + \alpha xyz + \beta y^2 z + \gamma yz^2=Q(x,z) + yz(\alpha x + \beta y + \gamma z)\\
+ &=Q(x,z)+z(\beta y^2 +(\alpha x+\gamma z)y)\\
+ &=Q(x,z)+z((\sqrt{\beta}y+\frac{\alpha x+\gamma z}{2\sqrt{\beta}})^2-\frac{(\alpha x+\gamma z)^2}{4\beta})\\
+ &=Q'(x,z)+z(\sqrt{\beta}y+\frac{\alpha x+\gamma z}{2\sqrt{\beta}})^2
+ \end{align*}
+ where $Q,Q'$ are homogeneous of degree $3$ and $\beta=P_z(0,1,0)\neq 0$. Therefore, we can perform the change of coordinates
+ \[ [x:y:z] \mapsto [x':\sqrt{\beta}y'+\frac{\alpha x'+\gamma z'}{2\sqrt{\beta}}:z'],\]
+ to have $C$ defined by a polynomial of the form
+ \[R(x,z)+y^2z,\]
+ where $R$ is homogeneous of degree 3. Since $C$ is nonsingular, $z$ does not divide $R$, which implies the $x^3$ term is nonzero. We can split $R$ as 
+ \[R(x,z)=u(x-az)(x-bz)(x-cz),\]
+ where $u\neq 0$ and $a,b,c$ being distinct by nonsingularity of $C$. To facilitate the final change of coordinates, write the full expression defining $C$ as,
+ \[\left( \frac{y}{\sqrt{u(b-a)^3}}\right) ^2z=\left(\frac{x-az}{b-a}\right)\left(\frac{x-az}{b-a}-z\right)\left(\frac{x-az}{b-a}-\frac{b-c}{b-a}z\right),\]
+ then perform $[x:y:z]\mapsto [\frac{x'-az'}{b-a}:\frac{y'}{\sqrt{u(b-a)^3}}:z']$ to obtain
+ \[y^2 z=x(x-z)(x-\lambda z),\]
+for $\lambda=\frac{b-c}{b-a}\in k$. 
+\end{proof}
+\begin{corollary*}
+If $C$ is a nonsingular projective cubic curve with a point of inflection $p=[a:b:c]$ then it is equivalent under a projective transformation to a curve defined by the polynomials
+\[ y^2 z=x^3+\alpha x z^2 +\beta z^3,\]
+with the image of $p$ being $[0:1:0]$.
+Equivalently, every such nonsingular cubic is equivalent in the affine plane to the depressed cubic
+\[ y^2=x^3+\alpha x + \beta.\]
+\end{corollary*}
+\begin{proof}
+Compose the above transformation with 
+\[[x:y:z]\mapsto [x'+\frac{\lambda +1}{3}z':y':z'] \]
+to obtain
+\[ y^2z=x^3+xz^2(-\frac{1}{3}\lambda ^2+\frac{1}{3}\lambda-\frac{1}{3})+(-\frac{2\lambda^3}{27}+\frac{\lambda^2}{9}+\frac{\lambda}{9}-\frac{2}{27}).\]
+\end{proof}
+This form of a cubic curve is very special. A cubic that be put into this form is called an \textit{elliptic curve}.
+\section{The Group Law on Elliptic Curves}
+\begin{definition}
+An elliptic curve is a nonsingular cubic curve.
+\end{definition}
+For simplification\footnote{Our subsequent constructions are invariant under projective change of variables and so our elliptic curve is not required to be in Weierstrass form to derive them; however the proof of this (that a change of variables is a group homomorphism) would take us too far afield.} we assume all of our elliptic curves are in the form $y^2z=x^3+a xz^2+bz^3$ with an inflection point at $p=[0:1:0]$. Note that in this form they are symmetric about the $x$-axis, and that its only point at infinity is the point $[0:1:0]$. Since they're nonsingular, their discriminant $\Delta =-16(4a^3+27b^2)$ is non-zero. Over $\mathbb{A}^{2}(\mathbb{R})$ they will always look like one of the two figures below, depending on whether their roots of the right hand terms include a complex conjugate pair.\\
+ \psset{plotpoints=200, plotstyle=curve, algebraic, arrowinset=1}
+ 
+ \begin{minipage}{.4\textwidth}
+\centering
+ 
+ \begin{pspicture*}(-2,-2)(2,2)
+
+    \psaxes[linecolor=LightSteelBlue3, linewidth=.7pt, ticksize=1pt 1pt, labels=none](0,0)(-5.8,-6.5)(6,7)[$x$, -120][$y$, -135]
+    \psset{linewidth=1.3pt, linecolor=grey}
+    \psplot{-1}{0}{\g}
+    \psplot{-1}{0}{-\g}
+    \psplot{1}{2}{\g}
+    \psplot{1}{2}{-\g}
+\end{pspicture*}%
+
+ \captionof*{figure}{$\Delta <0$}%
+\end{minipage}%
+\begin{minipage}{.6\textwidth}
+ \centering
+ \begin{pspicture*}(-2,-2)(2,2)
+
+    \psaxes[linecolor=LightSteelBlue3, linewidth=.7pt, ticksize=1pt 1pt, labels =none, arrows=->, ](0,0)(-5.8,-6.5)(6,7)[$x$, -120][$y$, -135]
+    \psset{linewidth=1.3pt, linecolor=IndianRed3}
+    \psplot{-1.3246}{2}{\f}
+    \psplot{-1.3246}{2}{-\f}
+\end{pspicture*}%
+
+  \captionof*{figure}{$\Delta >0$}%
+
+\end{minipage}%
+
+\par
+Elliptic curves are rich in structure and are very important. They are the source of a great amount of ongoing research throughout the mathematical community. This is largely because of the following theorem.
+\begin{theorem}
+Given two points $P,Q$ on an elliptic curve $E$, construct the unique line $l$ going through them. By Bézout's Theorem the line must meet the cubic in a third point, counting multiplicity $($ie. this third point may be $P$ or $Q$$)$. Reflect this third point about the $x$-axis $($ie. $[x:y:z]\mapsto [x:-y:z]$$)$ and define this point to be the formal sum $P+Q$. This definition is well-defined and defines an abelian group on our elliptic curve $E$ we denote by $E(\mathbb{C})$, with identity element $[0:1:0]$.
+\end{theorem}
+\begin{proof}
+Its clear from the results we have proved above that the construction is well-defined and gives a unique point on the elliptic curve for each sum of points. We prove the group axioms - associativity is the hardest part.
+\begin{enumerate}
+\item (Existence of identity) Define $O:=[0:1:0]$. It is obvious that $O$ is the identity - $O$ is the point infinitely far away in the $y$-direction, which means any line connecting it with a point on our curve is vertical and so reflects our point about the $x$-axis; reflecting again gives us the same point.
+\item (Closure) Clear from our definition of $P+Q$.
+\item (Commutativity) Follows from the fact that there is only one line going through any two points so the third intersection point is unique.
+\item (Existence of inverse) For every point $P=[a:b:c]$ define \\$-P:=[a:-b:c]$. The line joining these two points is vertical and so intersects the curve at infinity, implying $P-P=O$.
+\item (Associativity) Let $P,Q,R$ lie on our curve E. Consider the points $ P, Q, R, \\ P+Q, -(P+Q), Q+R, -(Q+R), -((P+Q)+R)$ and $-(P+(Q+R))$. If any of them were equal to the identity than associativity would follow. Assume this is not the case. Let $l_1, l_2, l_3$ be the lines joining the points $P$ \& $Q$, $Q$ \& $R$, and $P$ \& $(Q+R)$ respectively; and likewise denote the lines joining the points $(P+Q)$ \& $R$, $O$ \& $(Q+R)$, and $O$ \& $(P+Q)$ by $l_4, l_5,$ and $l_6$. Let $C$ be the cubic curve consisting of the lines $l_1, l_4,$ and $l_5$ and D be the cubic curve consisting of $l_2, l_3$ and $l_6$. Then the cubic curves $E,C,D$ meet at eight points; by the Cayley Bacharach Theorem they must intersect at nine points, implying the points $-((P+Q)+R)$ and $-(P+(Q+R))$ coincide.
+\end{enumerate}
+\end{proof}
+\begin{center}
+ \begin{pspicture*}(-4,-4)(4,4)
+
+    \psaxes[linecolor=LightSteelBlue3, linewidth=.7pt, ticksize=1pt 1pt, labels =none, ](0,0)(-5.8,-6.5)(6,7)[$x$, -120][$y$, -135]
+    \psset{linewidth=1.3pt, linecolor=IndianRed3, unit=1.5}
+    \psplot{-1.3246}{2}{\f}
+    \psplot{-1.3246}{2}{-\f}
+    \psline[linewidth=1.3pt](-4,-1.48)(4,2.953)
+    \uput[dl](-1.30,0.35){$ P $}
+    \uput[dl](1.38,1.75){$ Q $}
+    \uput[dl](1.1,-1){$ P+Q $}
+    \psline[linewidth=1.3pt, linestyle=dashed](0.2516,4)(0.2516,-4)
+    \psdot[linecolor=red,dotstyle=*, dotsize=5pt](-1.3247,0)
+    \psdot[linecolor=red,dotstyle=*, dotsize=5pt](1.38,1.5)
+    \psdot[linecolor=red,dotstyle=*, dotsize=5pt](0.2516,-0.8742)
+\end{pspicture*}%
+\end{center}
+
+Since the only the point $O$ is gained when embedding $E$ in the projective plane we can identify our curve as the set $E=\{(x,y)\in \mathbb{C}\text{ } |\text{ } y^2=x^3+\alpha x+\beta \} \cup \{O \}$. What is the structure of this group? Well first let's see explicitly how addition is calculated. Consider the points
+\[P=(x_p,y_p),\text{ }Q=(x_q,y_q)\]
+and $S=(x_s,y_s)$ the third intersection with the elliptic curve before reflection about the $x$-axis. Putting $\lambda=\frac{y_p-y_q}{x_p-x_q}$ then the line between $P,Q$ is $y=y_p+\lambda(x-x_p)$; subbing back into $y^2=x^3+\alpha x+\beta $ gives
+\[x^3- \lambda^2x^2+(\alpha+2\lambda^2x_p-2\lambda y_p)x+\beta-(\lambda x_p-y_p)^2=0.\]
+The three solutions to this cubic are $x_p,x_q,x_s$, hence from Vieta's formulae we have $x_p+x_q+x_s=\lambda^2$ and from the equation of the line we also have $y_s=y_p+\lambda(x_s-x_p)=y_p+\lambda(x_s-x_p)$; therefore
+\[P+Q=(x_s,-y_s)=(\lambda-x_p-x_q,\lambda(x_p-x_r)-y_p).\]
+So addition is done by rational combinations of the coordinates! If we formally assume that $O$ is a rational point, this immediately gives us two subgroups
+\begin{align*} &E(\mathbb{R}):=\{ (x,y)\in E(\mathbb{C})\text{ }|\text{ } x,y\in \mathbb{R}\}\cup \{O \} \\
+&E(\mathbb{Q}):=\{ (x,y)\in E(\mathbb{C})\text{ }|\text{ } x,y\in \mathbb{Q}\}\cup \{O \}.
+\end{align*}
+Of course, these groups are trivial unless there are real or rational points other than $O$.
+
+For the remainder of this paper we will investigate the properties of these groups.
+
+\section{Elliptic Curves as Complex Tori}
+Let a \textit{torus} over $\mathbb{C}$ be defined as the quotient $\mathbb{C}/\Lambda$ where $\Lambda=w_1\mathbb{Z}\oplus w_2\mathbb{Z}$ is a \textit{lattice} with $w_1,w_2$ being $\mathbb{R}$-independent. Our aim is to prove that for every elliptic curve we have $E(\mathbb{C})\simeq \mathbb{C}/\Lambda$ for some $\Lambda$; this leads us to the theory of elliptic functions.
+
+\begin{definition}
+An elliptic function $f$ is a meromorphic function on $\mathbb{C}$ which is periodic with respect to a lattice $\Lambda$. 
+\end{definition}
+We define a \textit{fundamental parallelogram} for a lattice $\Lambda$ to be a parallelogram $D \subset \mathbb{C}$ such that the natural map of sets $D\to C/ \Lambda$ is bijective (so if we know what values $f$ takes on $D$ we know what values it takes on everywhere else). Note that since the set of poles of a meromorphic function is discrete we can always choose a fundamental parallelogram that has no zeroes or poles on its boundary. 
+
+Throughout, $f$ is an elliptic function relative to a given $\Lambda=w_1\mathbb{Z}\oplus w_2\mathbb{Z}$ and $D$ is a fundamental parallelogram with this property.
+
+\begin{proposition}
+Every non-constant elliptic function must have a pole (and hence a zero).
+\end{proposition}
+\begin{proof}
+If not then our function is holomorphic. Since it's periodic we have $|f|\leq \sup_{z\in \bar{D}}|f(z)|$, implying by Liouville's Theorem that it's constant. If it had no zeroes, consider $\frac{1}{f}$.
+\end{proof}
+So every non-trivial elliptic function must have some zeros and poles. What about their orders and residues?
+\begin{proposition}
+\begin{enumerate}
+\item $\sum_{w\in D}$ res$_w (f)=0$
+\item $\sum_{w\in D}$ ord$_w (f)=0$
+\item $\sum_{w\in D}$ ord$_w (f)w\in\Lambda$; equivalently, the sum of poles minus the sum of zeros of an elliptic function is zero mod $\Lambda$ counting multiplicity.
+\end{enumerate}
+Note that the summation here makes sense since the set of zeros and poles of a meromorphic function on a compact set are finite, for otherwise $D$ would have an accumulation point which would not be isolated.
+\end{proposition}
+\begin{proof}
+Recall the generalized argument principle, that says
+\[\frac{1}{2\pi i}\int_C \frac{f'(z)}{f(z)}g(z) dz=\sum_{w\in C'}g(w)\text{ord}_w(f)\]
+when $g$ is analytic in a region, $C$ is a closed contour inside that region, and $C'$ is the region enclosed by $C$.
+\begin{enumerate}
+\item We have 
+\[ \sum_{w\in D} \text{res}_w (f)=\frac{1}{2\pi}\int_{\partial D}^{}f(z) dz.\]
+Since $f$ is periodic, integrating along opposite sides of the parallelogram cancel.
+\item Since $f$ is periodic, so is $f'$; from above we have
+\[ \sum_{w\in D}\text{ord}_w (f)=\frac{1}{2\pi}\int_{\partial D}\frac{f'(z)}{f(z)} dz=0.\]
+\item Let $a=\inf_{z\in D}|z|$ so that $D=\{b+w_1n_1+w_2n_2\text{ }|\text{ }n_1,n_2\in\mathbb{Z}\}$ for some $b$ with $|b|=a$; then
+\[ \sum_{w\in D} \text{ord}_w (f)w=\frac{1}{2\pi i}\left( \int_a^{a+w_1}+\int_{a+w_1}^{a+w_1+w_2}+\int_{a+w_1+w_2}^{a+w_2}+\int_{a+w_2}^{a} \right)z\frac{f'(z)}{f(z)}dz.\]
+Making the change of variable $z\mapsto z-w_1$ in the second integral and $z\mapsto z-w_2$ in the third and using periodicity yields
+\[\sum_{w\in D} \text{ord}_w (f)w=\frac{w_2}{2\pi i}\int_a^{a+w_1}\frac{f'(z)}{f(z)}dz+\frac{w_1}{2\pi i}\int_a^{a+w_2}\frac{f'(z)}{f(z)}dz. \]
+Both integrals are winding numbers around the origin of a path; and since $\frac{f'(z)}{f(z)}$ is periodic, it has equal values at the end points, implying the integrals divided by $2\pi i$ are integers. Therefore $\sum$ord$_w(f)$ has the desired form.
+\end{enumerate}
+\end{proof}
+By the second part of above, an elliptic function has the same number of zeros and poles counting multiplicity in a fundamental parallelogram.
+
+It's easy to see that the set of elliptic functions on a lattice is a field $\mathbb{C}(\Lambda)$ under the usual operations. As it turns out, there's a special function which entirely determines it. We set $\Lambda^*=\Lambda \backslash \{0\}$.
+
+\begin{proposition}
+\begin{enumerate}
+\item The series $\sum_{w\in \Lambda^*}\frac{1}{w^3}$ is absolutely convergent. It follows that the series
+\[ \text{G}_{2k} (\Lambda)=\sum_{w\in \Lambda^*} w^{-2k} \]
+is absolutely convergent also for $k>1$.
+
+\item The series 
+\[ \wp_\Lambda (z)=\frac{1}{z^2}+\sum_{w \in \Lambda^*} \left( \frac{1}{(z-w)^2}-\frac{1}{w^2} \right) \]
+converges absolutely and uniformly on every compact subset of $D$.
+\item The series $\wp_\Lambda (z)$ given above defines an even elliptic function relative to $\Lambda$ having a double pole with residue 0 at each lattice point, and no other poles.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}
+\item Consider the parallelograms for $n\leq 1$
+\[P_n=\{t_1w_1+t_2w_2\in\Lambda\text{ }|\text{ } t_1,t_2\in\mathbb{Z} \text{, max}\{|t_1|,|t_2|\}=n,  \}\subset \Lambda. \]
+If we enumerate
+\begin{align*}
+(-n,-n),(-n,-n+1),&\ldots,(-n,n)\\
+(n,-n),(-n,-n+1),&\ldots,(n,n) \\
+(-n,-n),(-n+1,-n),&\ldots,(n,-n) \\
+(-n,n),(-n+1,n),&\ldots,(n,n)
+\end{align*}
+this accounts for all points of $P_n$. Each line has $2n+1$ points, and $(-n,-n),(n,-n),(-n,n),(n,n)$ are double counted, hence $\# P_n=8n$. Let $l$ be the least distance between points from $P_1$ and the origin, then each point of $P_n$ has a distance at least $ln$ between it and the origin; therefore
+\[ \sum_{w\in \Lambda^*}\frac{1}{|w|^3} =\sum_{\substack{w\in P_n\\ n>0}}\frac{1}{|w|^3}\leq \sum_{n>0}\frac{8n}{l^3 n^3}=\frac{8}{l^3}\sum_{n>0}\frac{1}{n^2},\]
+implying the sum converges.
+\item For each $z$ in disk of radius $r$ centred at the origin, we have $|w|>2|z|$ for all but finite many $w\in\Lambda$. For those $w$'s we have 
+\[ \left| \frac{1}{(z-w)^2} - \frac{1}{w^2} \right| = \left| \frac{z(2w-z)}{w^2(z-w)^2} \right| \leq \frac{|z|(2+|\frac{z}{w}|)}{|w|^3 (1-|\frac{z}{w}|)^2 }< \frac{|z|(2+\frac{1}{2})}{|w|^3(1-\frac{1}{2})^2} \leq \frac{10r}{9|w|^3} \]
+with the second inequality following from $|1-\frac{z}{w}|^2\geq (1-|\frac{z}{w}|)^2$; hence this series converges absolutely uniformly on every compact subset of $\mathbb{C}\backslash \Lambda$.
+\item By above the series defines a holomorphic function on $\mathbb{C}\backslash \Lambda$; by inspection it is meromorphic on $\mathbb{C}$ with a double pole at each point of $\Lambda^*$. It's even, since
+\begin{align*}
+\wp_\Lambda (-z)&= \frac{1}{(-z)^2}+\sum_{w \in \Lambda^*} \left( \frac{1}{(-z-w)^2}-\frac{1}{(-w)^2} \right)\\
+&=\frac{1}{z^2}+\sum_{-w \in \Lambda^*} \left( \frac{1}{(z-w)^2}-\frac{1}{w^2} \right)= \wp_\Lambda (z).
+\end{align*} It remains to show it's periodic with respect to $\Lambda$. We have
+\[ \wp '_\Lambda (z)= \sum_{-w \in \Lambda^*} \frac{-2\phantom{-}}{(z-w)^3}, \]
+implying that $\wp '_\Lambda$ is periodic. Integrating we find that $\wp _\Lambda (z+w)\\ 
+=\wp _\Lambda (z)+c(w)$. Finally, we have
+\[ \wp _\Lambda \left(\frac{-w}{2}\right)=\wp _\Lambda \left(\frac{-w}{2}+w\right)=\wp _\Lambda \left(\frac{-w}{2} \right) +c(w) \]
+since it's even; therefore $c(w)=0$, as desired.
+
+\end{enumerate}
+\end{proof}
+
+The function $\wp _\Lambda$ is called the \textit{Weierstrass $\wp$-function} relative to $\Lambda$, and $G_{2k}(\Lambda)$ is the \textit{Eisenstein series of weight $2k$} for $\Lambda$.
+
+\begin{theorem}
+Every elliptic function $f$ is a rational combination of $\wp$ and $\wp'$.
+\end{theorem}
+\begin{proof}
+Since
+\[f(z)=\frac{f(z)+f(-z)}{2}+\frac{f(z)-f(-z)}{2} \]
+we may reduce to the case where $f$ is even or odd. But $\wp'$ is odd, implying $f\cdot\wp'$ is even if $f$ is odd; therefore we may assume that $f$ is even; note that this implies ord$_wf=$ord$_{-w}f$ $\forall w\in\mathbb{C}$. Since $f$ is elliptic it has the same number of zeros and poles counting multiplicity. Let $a_1,\ldots,a_n$ and $b_1,\ldots, b_n$ be its zeros and poles, where $a_i-a_j,b_i-b_j\not \in\Lambda$ $\forall i\neq j$. Define the function
+\[g(z)=f(z)\left( \prod_{i=1}^n  \frac{\wp(z)-\wp(a_i)}{\wp(z)-\wp(b_i)} \right )^{-1}.  \]
+Suppose first that $0$ is neither a zero or a pole of $f$. We claim $g$ is a holomorphic elliptic function, in which case the result follows since $g$ must be constant. We know that for every $k$, $\wp(z)-\wp(a_k)$ and $\wp(z)-\wp(b_k)$ only has singularities at each point of $\Lambda$ which are double poles; hence $g$ has removable singularities at each $z\in\Lambda$. For each $k$, $\wp(z)-\wp(b_k)$ has zeros of order $1$ at $\pm b_k$ since $\wp$ is even and $b_k\neq 0$. Since multiplicity is counted in our product, $g$ has a removable singularity at each $\pm b_k$, by comparison with the zeros of $f$. By an analogous argument, $g$ has a removable singularity at each $\pm a_k$. This accounts for all poles, so $g$ must be holomorphic. Since it's clearly elliptic, the claim follows.
+
+Now, $f$ being even implies that its Laurent series at the origin $f(z)=\sum_{k=-\infty}^{\infty}a_k z^k$ consists only of even powers since
+\[0=f(z)-f(-z)=\sum_{k=-\infty}^{\infty}(1-(-1)^k)a_k z^k\implies a_k=0 \text{ for odd }k. \]
+Suppose $f$ vanishes at the origin with order $2m$, then since $\wp^m$ has a pole of order $2m$ the function $f\cdot\wp^m$ has a removable singularity at the origin and so doesn't vanish there. Therefore we reduce to the case above. If $f$ has a pole at the origin then analogously we find that the function $\frac{f}{\wp^m}$ reduces to the case above for some $m$.
+\end{proof}
+
+Before the main result, we require one more construction. Essentially, we can build elliptic functions with any zeros or poles that we like, provided that they satisfy the conditions in Proposition 8. To this end we define the auxiliary \textit{Weierstrass $\sigma$-function} relative to $\Lambda$ by
+
+\[\sigma_\Lambda(z)=z\prod_{w\in\Lambda^*}\left(1-\frac{z}{w}\right)\text{exp}\left(\frac{z}{w}+\frac{1}{2}\left(\frac{z}{w}\right)^2\right). \]
+\begin{lemma*}
+\begin{enumerate}
+\item The function $\sigma_\Lambda$ is well-defined and is a holomorphic function on $\mathbb{C}$. Its only zeros are at each $z\in\Lambda$, which are simple.
+\item $\frac{d^2}{dx^2}\log \sigma_\Lambda(z)=-\wp(z)$ $\forall z\in\mathbb{C}\backslash\Lambda$.
+\item For every $w\in\Lambda$ there are constants $a,b\in\mathbb{C}$ such that
+\[ \sigma(z+w)=e^{az+b}\sigma(z).  \]
+\item Let $n_1,\ldots, n_r\in\mathbb{Z}$ and $z_1,\ldots,z_r\in\mathbb{C}$ be such that 
+\[ \sum^r n_i=0\text{ and }\sum^r n_iz_i\in\Lambda,\]
+then there exists an elliptic function $f\in\mathbb{C}$ such that ord$_{z_i} f=n_i$ $\forall i$ and ord$_{z}f=0$ for any other $z\neq z_1,\ldots,z_r$ (inside a fundamental parallelogram for $\Lambda$). Moreover if $\sum n_iz_i=0$ then
+\[ f(z)=\prod_{i=1} ^r \sigma(z-z_i)^{n_i} \]
+is such a function.
+\end{enumerate}
+\end{lemma*}
+\begin{proof}
+\begin{enumerate}
+\item For this result we refer to a result given in [Ah1, pg 196] that implies that the infinite product converges to an entire function if\\ $\sum_{w\in\Lambda^*}\frac{1}{|w|^3}<\infty$, which is clearly true. The zeros are easily discernible since an infinite product is zero if and only if it converges and one of the terms is zero.
+\item We have
+\[\log\sigma_\Lambda = \log(z) +\sum_{w\in\Lambda^*}\left( \log\left(1-\frac{z}{w}\right)+\frac{z}{w}+\frac{1}{2}\left(\frac{z}{w}\right)^2 \right). \]
+Since it's entire we can differentiate term by term, giving
+\[\frac{d^2}{dz^2}\log\sigma_\Lambda (z)= -\frac{1}{z^2}+\sum_{w\in\Lambda^*}\frac{-1}{(z-w)^2}+\frac{1}{w^2}=-\wp(z).  \]
+\item Integrating the equation $\wp(z+w)=\wp(z)$ twice and using the above identity we get
+\[\log\sigma_\Lambda(z+w)=\log\sigma_\Lambda(z)+az+b\]
+for some constants $a$ and $b$, which implies the result.
+\item Suppose $\sum n_i z_i=\lambda$; if we instead find an elliptic function $\tilde{f}$ with these points and orders but also with $\lambda$ being a simple zero and $0$ being a simple pole, then $\sum n_i z_i=0$; in which case $f=\frac{z\tilde{f}}{z-\lambda}$ would be a function satisfying our original conditions. Hence, we assume that $\sum n_i z_i=0$. The function
+\[ f(z)=\prod_{i=1}^r\sigma_\Lambda (z-z_i)^{n_i}\]
+has the correct zeros and poles in a fundamental parallelogram, and using the above identity we have
+\[\frac{f(z+w)}{f(z)}=\prod e^{(a(z-z_i)+b)n_i} =e^{(az+b)\sum n_i}e^{-a\sum n_i z_i}=0\]
+implying it's elliptic.
+\end{enumerate}
+\end{proof}
+Now we can use the Laurent expansion of $\wp$ around the origin to investigate the connection with elliptic curves.
+\begin{proposition}
+\begin{enumerate}
+\item The Laurent series for $\wp$ around the origin is 
+\[\wp(z)=\frac{1}{z^2}+\sum_{k=1}^{\infty}(2k+1)G_{2k+1}z^{2k}.  \]
+\item For every $z\in\mathbb{C}\backslash\Lambda$,
+\[\wp'^2=4\wp^3-60G_4\wp-140G_6. \]
+\item Put $g_2=g_2(\Lambda)=60G_4(\Lambda)$ and $g_3=g_3(\Lambda)=140G_6(\Lambda)$, then the polynomial
+\[4x^3-g_2x-g_3\] has distinct roots; equivalently, $\Delta(\Lambda)=g_2^3-27g_3^2\neq0$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}
+\item For all $z$ with $|z|<|w|,w\in\Lambda^*$ write 
+\[\frac{1}{(z-w)^2}-\frac{1}{w^2}=\frac{1}{w^2}\left(\frac{1}{(1-\frac{z}{w})^2}-1\right)=\sum_{n=1}^{\infty}(n+1)\frac{z^n}{w^{n+1}};  \] then
+\begin{align*}
+\wp(z)&=\frac{1}{z^2}+\sum_{\Lambda*}\left( \frac{1}{(z-w)^2}-\frac{1}{w^2}\right)\\
+&=\frac{1}{z^2}+\sum_{\Lambda*}\left( \sum_{n=1}^{\infty}(n+1)\frac{z^n}{w^{n+2}}\right)\\
+&=\frac{1}{z^2}+\sum_{k=1}^{\infty}(2k+1)\sum_{\Lambda*} \frac{z^{2k}}{w^{2k+2}}\text{ , since for odd $n$ the terms $\frac{1}{w^{n+2}}$ and $\frac{1}{-w^{n+2}}$ cancel}\\
+&=\frac{1}{z^2}+\sum_{k=1}^{\infty}(2k+1)G_{2k+2}z^{2k}
+\end{align*}
+\item Computing the Laurent series of various terms we have
+\[\wp'(z)^2=4z^{-6}-24G_4z^{-2}-80G_6+\ldots\]
+\[\wp(z)^3=z^{-6}+9g_4z^{-2}+15G_6+\ldots\]
+\[\wp(z)=z^{-2}+\sum_{k=1}^{\infty}(2k+1)G_{2k+2}z^{2k}.\]
+Comparing terms we see that the elliptic function
+\[f(z)=\wp'(z)^2-4\wp(z)^3+g_2\wp(z)+g_3\]
+is holomorphic around the origin and on $\mathbb{C}\backslash\Lambda$; therefore it must be holomorphic everywhere (by periodicity), and so is identically constant since it's elliptic. By noting the constant terms in the Laurent series, evaluating at the origin gives $f(0)=-g_3+g_3=0$, implying the result.
+\item Let $w_3=w_1+w_2$; each $w_i$ is distinct since $w_1,w_2$ is $\mathbb{R}$-independent. Since $\wp'$ is odd we have
+\[\wp'\left(\frac{w_i}{2}\right)=-\wp'\left(-\frac{w_i}{2}\right)=-\wp'\left(\frac{w_i}{2}\right) \Longrightarrow \wp'\left(\frac{w_i}{2}\right)=0,\]
+hence each $\wp'\left(\frac{w_i}{2}\right)$ is a root of $4x^3-g_2x-g_3$; it remains to show that they are distinct. Consider the even elliptic function $g_i(z)=\wp(z)-\wp\left(\frac{w_i}{2}\right)$. Since $\wp$ has a double zero at each lattice point and no other zeros, $g_i(w)$ has a double zero $\pm\frac{w_i}{2}$ and no other zeros, implying each $\wp\left(\frac{w_i}{2}\right)$ is distinct since $\frac{w_i}{2}\neq\frac{w_j}{2}$ mod $\Lambda$ $ \forall i\neq j$.
+
+
+\end{enumerate}
+\end{proof}
+We see that $y^2=4x^3-g_2x-g_3$ is always an elliptic curve since it has non-zero discriminant. Now we can show the first direction of the equivalence $\mathbb{C}/\Lambda \leftrightarrow E(\mathbb{C})$.
+\begin{theorem}
+Let E$(\mathbb{C})$ be the elliptic curve
+\[ y^2=4x^3-g_2x-g_3; \]
+then the map
+\[\phi: C/\Lambda \rightarrow \text{E}(\mathbb{C})\]
+given by
+\[z\mapsto\begin{cases}
+    (\wp(z),\wp'(z))                       & z\neq0\text{ mod }\Lambda\\
+    O                            &z=0\text{ mod }\Lambda.
+  \end{cases}\]
+is a group isomorphism.
+\end{theorem}
+\begin{proof}
+Note that the map makes sense since we already proved $\wp'^2=4\wp^3-g_2\wp-g_3$. Let $z_1,z_2\in\mathbb{C}$; by linear algebra we can find constants $a,b$ such that
+\[\wp(z_1)+a\wp'(z_1)=b\]
+\[\wp(z_2)+a\wp'(z_2)=b.\]
+The function $\wp(a)+a\wp'(z)-b$ has a triple pole at the origin and no other poles mod $\Lambda$. By proposition $8$ we know that $\sum$ord$_w(f)w=0$ mod $\Lambda$, hence $z_1,z_2$ being simple zeros implies the only other zero is $-z_1-z_2$. Thus, the point
+\[(\wp(z_1+z_2),-\wp'(z_1+z_2))=(\wp(-z_1-z_2),\wp'(-z_1-z_2))\]
+is collinear with $(\wp(z_1),\wp'(z_1)),(\wp(z_2),\wp'(z_2))$, all three being on the line $x+ay-b=0$ and the elliptic curve. Therefore 
+\begin{align*}
+\phi(z_1+z_2)&=(\wp(z_1+z_2),\wp'(z_1+z_2))=(\wp(z_1),\wp'(z_1))+(\wp(z_2),\wp'(z_2))\\
+&=\phi(z_1)+\phi(z_2)
+\end{align*}
+For surjectivity, let $(x,y)\in E(\mathbb{C})$. The elliptic function $\wp(z)-x$ is non-constant and so has a root, say $z=a$. It follows that $\wp'(a)^2=y^2$ and by replacing $a$ with $-a$ if need be, and noting that $\wp$ is even and $\wp$ is odd, we obtain $\wp'(a)=y$. Therefore, $\phi(a)=(x,y)$.
+
+Finally, suppose $\phi(z_1)=(\wp(z_1),\wp'(z_1))=(\wp(z_2),\wp'(z_2))=\phi(z_2)$. The function $\wp(z)-\wp(z_1)$ has a pole of order $2$ and so can only have two other zeros mod $\Lambda$ counting multiplicity. It vanishes at $z_1,-z_1$ and $z_2$ so two of these must be congruent. Suppose $2z_1\not\in\Lambda$ so that $z_1\neq-z_1$ mod $\Lambda$ and $z_2=\pm z_1$ mod $\Lambda$. Then
+\[\wp'(z_1)=\wp'(z_2)=\wp'(\pm z_1)=\pm\wp'(z_1)\]
+implies either $z_2=z_1$ mod $\Lambda$ or $\wp'(z_1)=0$. However from the proof of proposition 10, we know that the only zeros of $\wp'$ are $\frac{w_i}{2}$, so if $\wp'(z_1)=0$ then we must have $2z_1\in\Lambda$, a contradiction. Hence in this case $z_1=z_2$ mod $\Lambda$. If $2z_1\in\Lambda$ then $\wp(z)-\wp(z_1)$ has a double zero at $z_1$; as above it can only have two zeros counting multiplicity, so we must have $z_1=z_2$ mod $\Lambda$. This completes the proof\footnote{Note that we could extend this result to show this map is in fact an isomorphism of Riemann surfaces, but the present develop suffices for our aims.}
+
+\end{proof}
+
+We have proved that there is a well defined mapping
+\[\{\text{Complex Tori}\} \longrightarrow \{\text{Elliptic Curves over }\mathbb{C} \}.\]
+All that remains is to prove that this map is in fact surjective. To this end we introduce a very special function on the set of lattices called the $j$-\textit{invariant}
+\[j(\Lambda)=\]
+ If we consider the value of the Eisenstein series $g_2(\Lambda),g_3(\Lambda)$ as functions 
+There is quite a lot that can be said about this function, but for our purposes we need only prove that it takes every complex value; hence we take a more direct approach than what is usually taken.
+
+
+
+
+
+
+
+
+\appendix 
+\section{Homogenous Polynomials}
+
+An equivalent definition of a homogenous polynomial $P$ of degree $d$ over a ring $R$ is an element of $R[x_1,\ldots ,x_n]$ that can be written in the form 
+\[P=\sum_{k_{1}+\ldots + k_{n}=d} a_{k_1,\ldots k_n} x^{k_{1}}x^{k_{2}}\cdots x^{k_{n}},\]
+where each $a_{k_1,\ldots k_n} \in R$.
+\begin{proposition*} 
+Every factor of a homogenous polynomial is homogeneous.
+\end{proposition*} \begin{proof}
+Let $P$ be a homogeneous polynomial. Omitting the trivial case where $P$ is irreducible, factor $P=QS$ where neither $Q$ or $S$ is constant. Write $Q=U+V$ where only $U$ is homogenous and deg $V<$ deg $U=$ deg $Q$ and similarly with $S=K+L$ and deg $L<$ deg $K=$ deg $S$; then
+\[P=(U+V)(K+L)=UK+UL+VK+VL,\]
+but deg $UL +VK+VL=\max \{$deg $UL,$ deg $VK,$ deg $VL\}< $ deg $UK=$ deg $P$ implying deg $UL +VK+VL=0$. Homogeneous polynomials don't have constant summands, therefore $P=UK$.
+\end{proof}
+\begin{proposition*}
+A homogenous polynomial in $k[x,y]$ splits into linear factors $b_{i}x- c_{i}y$ where $b,c\in \overline{k}$ ($\overline{k}$ being the algebraic closure of $k$).
+\begin{proof}
+Let $P\in k[x,y]$ be homogenous of degree $d$; write \begin{equation*}
+P(x,y)=\sum_{i=0}^{d}a_i x^i y^{n-i}=y^d \sum_{i=0}^{d}a_i (\frac{x}{y})^i,
+\end{equation*}
+where at least one $a_i$ is not zero. Let $e$ be the largest element of $\{0, \ldots , d\}$ such that $a_e\neq 0$; then $\sum_{i=0}^{d}a_i (\frac{x}{y})^i$ splits over $\overline{k}$ as 
+\begin{equation*}
+\sum_{i=0}^{d}a_i (\frac{x}{y})^i=a_e \prod_{i=0}^{e} (\frac{x}{y} - \gamma_i).
+\end{equation*}
+Therefore, $P$ splits over $\overline{k}$ as 
+\begin{equation*}
+P(x,y)=\sum_{i=0}^{d}a_i (\frac{x}{y})^i=a_e y^d \prod_{i=0}^{e} (\frac{x}{y} - \gamma_i)=a_e y^{d-e}\prod_{i=0}^{e} (x - \gamma_i y).
+\end{equation*}
+\end{proof}
+\end{proposition*}
+We cannot strengthen this result to the case of a homogeneous polynomial in more than two variables; take $x^2 + y^2 +z^2$ for example.
+
+
+\section{Projective transformations}
+\begin{definition}
+A projective transformation is a bijection $f:\mathbb{P}^{2}(k) \to \mathbb{P}^{2}(k)$ such that for some linear isomorphism $\alpha : k^{2+1} \to k^{2+1}$ we have $f \circ \Pi = \Pi \circ \alpha$, where $\Pi : k^{2+1} \to \mathbb{P}^{2}(k)$ is the canonical projection.
+\end{definition}
+This is a generalisation of a linear change of coordinates. We interchangeably call a projective transformation a change of coordinates throughout the main body of the text.
+\begin{proposition*} 
+Given four distinct points $p_0, p_1, p_2$ and $q$ in $\mathbb{P}^{2}(k)$, no three of which are are collinear when viewed as points in $k^{2+1}$, there exists a projective transformation sending $p_0, p_1$ and $p_2$ to $[1:0:0], [0:1:0]$ and $[0:0:1]$, and $q$ to $[1:1:1]$.
+\end{proposition*}
+\begin{proof}
+Let $u_0, u_1, u_2$ and $v$ be the points $p_0, p_1, p_2$ and $q$ as they are represented in $k^{2+1}$. The points $u_i$ are linearly independent, since our original points are distinct in $\mathbb{P}^{2}(k)$ and are not collinear in $k^{2+1}$. Therefore, there exists a linear transformation sending them to the standard basis. This defines a projective transformation $f$ sending $p_0, p_1$ and $p_2$ to $[1:0:0], [0:1:0]$ and \\ $[0:0:1]$. Moreover, the conditions on our points imply that $q=[\lambda_1,\lambda_2,\lambda_3]$ where $\lambda_1,\lambda_2,\lambda_3$ are all nonzero. The composition of $f$ with the diagonal matrix 
+\[\begin{pmatrix}
+  \frac{1}{\lambda_1} &     0                           & 0                                \\
+   0                             & \frac{1}{\lambda_2} & 0                                 \\
+   0                             &  0                             &  \frac{1}{\lambda_3}    \\
+ \end{pmatrix}\]
+ is our required projective transformation.
+\end{proof}
+In particular, since lines in $\mathbb{P}^{2}(k)$ are defined by two points, we can send a point and its tangent line to wherever we need.
+\begin{lemma*} 
+The resultant being zero is invariant under a projective change of coordinates.
+\end{lemma*}
+\begin{proof}
+Let  $P,Q$ be of degree $m,n$ respectively. The result follows from the following relations:
+\begin{itemize}
+\item $R_{P(x+a),Q(x+a)}=R_{P(x),Q(x)}$ $\forall a\in k$
+\item $R_{P(ax),Q(ax)}=a^{mn}R_{P(x),Q(x)}$
+\item $R_{x^mP(\frac{1}{x}),x^nQ(\frac{1}{x})}=(-1)^{mn}R_{P(x),Q(x)}$
+\end{itemize}
+$\forall a\in k$.
+\end{proof}
+
+\section{temporary bilbiography}
+Silverman, arithmetic of elliptic curves\\
+silverman, rational points on elliptic curves\\
+kirwan, complex algebraic curves\\
+husemoller, elliptic curves\\
+lang, elliptic curves\\
+ahlfors
+\end{document}
